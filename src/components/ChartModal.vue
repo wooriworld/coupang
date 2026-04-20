@@ -19,7 +19,7 @@
     <q-card class="chart-modal__card">
       <!-- 헤더 -->
       <q-bar class="chart-modal__header">
-        <span class="chart-modal__header-title">월별 지출 현황</span>
+        <span class="chart-modal__header-title">Monthly Expense Overview</span>
         <q-space />
         <q-btn dense flat round icon="close" color="white" v-close-popup />
       </q-bar>
@@ -41,9 +41,9 @@
           <table class="chart-modal__table">
             <thead>
               <tr>
-                <th>월</th>
-                <th>전체금액</th>
-                <th>체크금액</th>
+                <th>Date</th>
+                <th>Total Amount</th>
+                <th>Checked Amount</th>
               </tr>
             </thead>
             <tbody>
@@ -87,12 +87,12 @@ const chartHeight = computed(() => {
 // ─────────────────────────────────────────────
 const series = computed(() => [
   {
-    name: '전체금액',
+    name: 'Total Amount',
     type: 'bar',
     data: chartData.value.map((d) => (d.hasData ? d.totalAmount : null)),
   },
   {
-    name: '체크금액',
+    name: 'Checked Amount',
     type: 'line',
     data: chartData.value.map((d) => (d.hasData ? d.checkedAmount : null)),
   },
