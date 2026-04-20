@@ -38,15 +38,23 @@
                 @click.stop="popupYear++"
               />
             </div>
-            <q-date
-              :model-value="popupYear + '/' + String(selectedMonth).padStart(2, '0')"
-              mask="YYYY/MM"
-              default-view="Months"
-              :navigation-max-year-month="currentYear + '/12'"
-              emit-immediately
-              minimal
-              @update:model-value="onDateSelect"
-            />
+            <div class="month-selector__month-grid">
+              <button
+                v-for="(name, idx) in MONTHS"
+                :key="idx"
+                class="month-selector__month-btn"
+                :class="{
+                  'month-selector__month-btn--selected': idx + 1 === selectedMonth && popupYear === year,
+                  'month-selector__month-btn--has-data': hasMonthData(idx + 1),
+                  'month-selector__month-btn--disabled': isMonthDisabled(idx + 1),
+                }"
+                :disabled="isMonthDisabled(idx + 1)"
+                @click="onMonthClick(idx + 1)"
+              >
+                {{ name }}
+                <span v-if="hasMonthData(idx + 1)" class="month-selector__month-dot" />
+              </button>
+            </div>
           </div>
         </q-popup-proxy>
       </div>
@@ -144,6 +152,20 @@ const popupYear = ref(props.modelValue.year);
 const qDatePopup = ref<{ hide: () => void }>();
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function hasMonthData(month: number): boolean {
+  return (props.allMonthsWithData?.get(popupYear.value) ?? []).includes(month);
+}
+
+function isMonthDisabled(month: number): boolean {
+  return popupYear.value === currentYear && month > new Date().getMonth() + 1;
+}
+
+function onMonthClick(month: number) {
+  year.value = popupYear.value;
+  selectMonth(month);
+  qDatePopup.value?.hide();
+}
 const monthLabel = computed(() => `${MONTHS[selectedMonth.value - 1]} ${year.value}`);
 
 const orderAmountLabel = computed(() =>
@@ -169,12 +191,6 @@ watch(
     popupYear.value = val.year;
   },
 );
-
-function onDateSelect(val: string) {
-  year.value = popupYear.value;
-  selectMonth(Number(val.slice(5, 7)));
-  qDatePopup.value?.hide();
-}
 
 function selectMonth(m: number) {
   selectedMonth.value = m;

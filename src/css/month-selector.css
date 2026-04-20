@@ -162,6 +162,59 @@
   color: #1a1a2e;
 }
 
+/* ─── 커스텀 월 그리드 ──────────────────────────── */
+.month-selector__month-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 8px 12px 12px;
+}
+
+.month-selector__month-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a1a2e;
+  cursor: pointer;
+  transition: background 0.15s;
+  gap: 2px;
+}
+
+.month-selector__month-btn:hover:not(:disabled) {
+  background: #f0f0f5;
+}
+
+.month-selector__month-btn--selected {
+  background: #1a1a2e !important;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.month-selector__month-btn--disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.month-selector__month-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #1976d2;
+  flex-shrink: 0;
+}
+
+.month-selector__month-btn--selected .month-selector__month-dot {
+  background: #90caf9;
+}
+
 /* ─── 날짜 팝업 ─────────────────────────────────── */
 .month-selector__date-popup {
   background: #fff;
