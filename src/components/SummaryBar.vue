@@ -3,7 +3,7 @@
     <!-- 중앙: 금액 + 서브 정보 -->
     <div class="summary-bar__main">
       <span class="summary-bar__meta">
-        Total {{ formatAmount(summary.totalAmount) }}원 &nbsp;·&nbsp; {{ summary.checkedCount }}/{{
+        Total ₩ {{ formatAmount(summary.totalAmount) }} &nbsp;·&nbsp; {{ summary.checkedCount }}/{{
           summary.totalCount
         }}
         items checked

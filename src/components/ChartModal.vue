@@ -92,7 +92,7 @@ const series = computed(() => [
     data: chartData.value.map((d) => (d.hasData ? d.totalAmount : null)),
   },
   {
-    name: 'Checked Amount',
+    name: '체크금액',
     type: 'line',
     data: chartData.value.map((d) => (d.hasData ? d.checkedAmount : null)),
   },

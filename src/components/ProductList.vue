@@ -2,11 +2,7 @@
   <div>
     <!-- 로딩: 스켈레톤 -->
     <div v-if="loading" class="card-base product-list__card">
-      <q-item
-        v-for="i in 6"
-        :key="i"
-        class="product-list__skeleton-item"
-      >
+      <q-item v-for="i in 6" :key="i" class="product-list__skeleton-item">
         <q-item-section avatar>
           <q-skeleton type="QCheckbox" size="20px" />
         </q-item-section>
@@ -30,7 +26,11 @@
         {{ hasFetched ? '주문 내역이 없어요' : '조회해 보세요' }}
       </p>
       <p class="product-list__empty-sub">
-        {{ hasFetched ? '해당 월에 주문 내역이 없습니다.' : '연도와 월을 선택한 후 조회 버튼을 눌러 주세요.' }}
+        {{
+          hasFetched
+            ? '해당 월에 주문 내역이 없습니다.'
+            : '연도와 월을 선택한 후 조회 버튼을 눌러 주세요.'
+        }}
       </p>
     </div>
 
@@ -41,10 +41,7 @@
           v-for="row in products"
           :key="row.id"
           clickable
-          :class="[
-            'product-item',
-            checkedIds.has(row.id) ? 'product-item--checked' : '',
-          ]"
+          :class="['product-item', checkedIds.has(row.id) ? 'product-item--checked' : '']"
           @click="emit('toggle', row.id)"
         >
           <!-- 체크박스 -->
@@ -101,7 +98,7 @@
                 checkedIds.has(row.id) ? 'product-item__price--checked' : '',
               ]"
             >
-              {{ row.price.toLocaleString('ko-KR') }}원
+              ₩ {{ row.price.toLocaleString('ko-KR') }}
             </span>
           </q-item-section>
         </q-item>
