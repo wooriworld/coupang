@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { loadMonthSummaries } from 'src/services/firestoreService';
+import { loadMonthSummaries } from 'src/services/supabaseService';
 
 export interface ChartMonthData {
   month: string;       // 'YYYY-MM'

@@ -113,9 +113,9 @@ import 'src/css/user-item-panel.css';
 import type { SelectedMonth } from 'src/models/app';
 import type { UserItem } from 'src/models/order';
 import {
-  loadUserItemsFromFirestore,
-  saveUserItemsToFirestore,
-} from 'src/services/firestoreService';
+  loadUserItems,
+  saveUserItems,
+} from 'src/services/supabaseService';
 
 const props = defineProps<{
   selectedMonth: SelectedMonth;
@@ -143,7 +143,7 @@ function formatDate(yyyymmdd: string): string {
 async function loadItems() {
   isLoading.value = true;
   try {
-    items.value = await loadUserItemsFromFirestore(yyyymm.value);
+    items.value = await loadUserItems(yyyymm.value);
   } finally {
     isLoading.value = false;
   }
@@ -169,12 +169,12 @@ async function addItem() {
   items.value = [...items.value, newItem];
   inputName.value = '';
   inputPrice.value = null;
-  await saveUserItemsToFirestore(yyyymm.value, items.value);
+  await saveUserItems(yyyymm.value, items.value);
 }
 
 // ─── 삭제 ─────────────────────────────────────────
 async function removeItem(id: string) {
   items.value = items.value.filter((item) => item.id !== id);
-  await saveUserItemsToFirestore(yyyymm.value, items.value);
+  await saveUserItems(yyyymm.value, items.value);
 }
 </script>

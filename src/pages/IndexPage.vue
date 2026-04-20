@@ -110,11 +110,11 @@ import type { ProductRow, OrderSummary } from 'src/models/order';
 
 import { fetchOrders } from 'src/services/orderService';
 import {
-  loadOrdersFromFirestore,
-  saveOrdersToFirestore,
-  deleteOrdersFromFirestore,
+  loadOrders,
+  saveOrders,
+  deleteOrders,
   listDataMonths,
-} from 'src/services/firestoreService';
+} from 'src/services/supabaseService';
 
 // ─────────────────────────────────────────────
 // 플랫폼
@@ -141,7 +141,7 @@ const showCookieWarning = ref(false);
 const hasFetched = ref(false);
 
 // ─────────────────────────────────────────────
-// Firestore 기반 has-data 월 목록
+// Supabase 기반 has-data 월 목록
 // ─────────────────────────────────────────────
 
 const monthsWithDataByYear = ref<Map<number, number[]>>(new Map());
@@ -243,8 +243,8 @@ async function onFetch() {
   const yyyymm = `${selectedMonth.year}${String(selectedMonth.month).padStart(2, '0')}`;
 
   try {
-    // 1. Firestore 우선 로드
-    const savedData = await loadOrdersFromFirestore(yyyymm);
+    // 1. Supabase 우선 로드
+    const savedData = await loadOrders(yyyymm);
     if (savedData) {
       currentProducts.value = savedData.products;
       currentCheckedIds.value = savedData.checkedIds;
@@ -253,7 +253,7 @@ async function onFetch() {
       return;
     }
 
-    // 2. Firestore에 없음 → 모바일은 여기서 종료
+    // 2. Supabase에 없음 → 모바일은 여기서 종료
     if (!isDesktop.value) {
       hasFetched.value = true;
       return;
@@ -274,11 +274,11 @@ async function onFetch() {
     currentProducts.value = products;
     hasFetched.value = true;
 
-    // Firestore 자동 저장 (데이터 없으면 저장 생략)
+    // Supabase 자동 저장 (데이터 없으면 저장 생략)
     if (products.length > 0) {
       saveErrorMessage.value = '';
       try {
-        await saveOrdersToFirestore(yyyymm, products, new Set());
+        await saveOrders(yyyymm, products, new Set());
         addToDataMonths(selectedMonth.year, selectedMonth.month);
       } catch (saveErr) {
         const msg = saveErr instanceof Error ? saveErr.message : '알 수 없는 오류';
@@ -314,9 +314,9 @@ async function onRefetch() {
   errorMessage.value = '';
 
   try {
-    // Firestore 문서 삭제 (없으면 무시하고 진행)
+    // Supabase 행 삭제 (없으면 무시하고 진행)
     try {
-      await deleteOrdersFromFirestore(yyyymm);
+      await deleteOrders(yyyymm);
       const map = new Map(monthsWithDataByYear.value);
       const filtered = (map.get(selectedMonth.year) ?? []).filter((m) => m !== selectedMonth.month);
       if (filtered.length > 0) {
@@ -332,7 +332,7 @@ async function onRefetch() {
     isRefetching.value = false;
   }
 
-  // 쿠팡 API 재조회 → 성공 시 Firestore 자동 저장
+  // 쿠팡 API 재조회 → 성공 시 Supabase 자동 저장
   await onFetch();
 }
 
@@ -341,7 +341,7 @@ async function onSave() {
   isSaving.value = true;
   saveErrorMessage.value = '';
   try {
-    await saveOrdersToFirestore(yyyymm, currentProducts.value, currentCheckedIds.value);
+    await saveOrders(yyyymm, currentProducts.value, currentCheckedIds.value);
     addToDataMonths(selectedMonth.year, selectedMonth.month);
     $q.notify({ type: 'positive', message: '저장되었습니다.' });
   } catch (err) {
