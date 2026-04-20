@@ -44,7 +44,8 @@
                 :key="idx"
                 class="month-selector__month-btn"
                 :class="{
-                  'month-selector__month-btn--selected': idx + 1 === selectedMonth && popupYear === year,
+                  'month-selector__month-btn--selected':
+                    idx + 1 === selectedMonth && popupYear === year,
                   'month-selector__month-btn--has-data': hasMonthData(idx + 1),
                   'month-selector__month-btn--disabled': isMonthDisabled(idx + 1),
                 }"
@@ -169,18 +170,18 @@ function onMonthClick(month: number) {
 const monthLabel = computed(() => `${MONTHS[selectedMonth.value - 1]} ${year.value}`);
 
 const orderAmountLabel = computed(() =>
-  props.summary !== undefined ? props.summary.checkedAmount.toLocaleString('ko-KR') + '원' : '—',
+  props.summary !== undefined ? '₩ ' + props.summary.checkedAmount.toLocaleString('ko-KR') : '—',
 );
 
 const userAmountLabel = computed(() =>
-  props.userTotal !== undefined ? props.userTotal.toLocaleString('ko-KR') + '원' : '—',
+  props.userTotal !== undefined ? '₩ ' + props.userTotal.toLocaleString('ko-KR') : '—',
 );
 
 const totalAmountLabel = computed(() => {
   const order = props.summary?.checkedAmount;
   const user = props.userTotal;
   if (order === undefined && user === undefined) return '—';
-  return ((order ?? 0) + (user ?? 0)).toLocaleString('ko-KR') + '원';
+  return '₩ ' + ((order ?? 0) + (user ?? 0)).toLocaleString('ko-KR');
 });
 
 watch(

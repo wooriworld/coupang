@@ -68,25 +68,23 @@
 
 /* ─── 금액 요약 블록 ─────────────────────────────── */
 .month-selector__amounts {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 5px;
+  display: grid;
+  grid-template-columns: 16px 35px auto;
+  align-items: center;
+  column-gap: 6px;
+  row-gap: 6px;
   min-width: 0;
   flex: 1;
 }
 
 .month-selector__amount-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+  display: contents;
 }
 
 .month-selector__amount-label {
   font-size: 11px;
   color: #bdbdbd;
   font-weight: 500;
-  flex-shrink: 0;
 }
 
 .month-selector__amount-value {
@@ -94,8 +92,6 @@
   font-weight: 700;
   letter-spacing: -0.4px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .month-selector__amount-value--order {
