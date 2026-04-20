@@ -60,21 +60,21 @@
       <div class="month-selector__amounts">
         <div class="month-selector__amount-item">
           <q-icon name="receipt_long" size="13px" class="month-selector__amount-icon--order" />
-          <span class="month-selector__amount-label">주문</span>
+          <span class="month-selector__amount-label">Order</span>
           <span class="month-selector__amount-value month-selector__amount-value--order">{{
             orderAmountLabel
           }}</span>
         </div>
         <div class="month-selector__amount-item">
           <q-icon name="add_shopping_cart" size="13px" class="month-selector__amount-icon--user" />
-          <span class="month-selector__amount-label">추가</span>
+          <span class="month-selector__amount-label">Add</span>
           <span class="month-selector__amount-value month-selector__amount-value--user">{{
             userAmountLabel
           }}</span>
         </div>
         <div class="month-selector__amount-item month-selector__amount-item--total">
           <q-icon name="functions" size="13px" class="month-selector__amount-icon--total" />
-          <span class="month-selector__amount-label">합계</span>
+          <span class="month-selector__amount-label">Total</span>
           <span class="month-selector__amount-value month-selector__amount-value--total">{{
             totalAmountLabel
           }}</span>
@@ -93,7 +93,7 @@
           :loading="isRefetching"
           :disable="isRefetching || isSaving || isFetching"
           icon="refresh"
-          label="재조회"
+          label="Reload"
           @click="emit('refetch')"
         />
         <ChartModal />
@@ -103,7 +103,7 @@
           :loading="isSaving"
           :disable="!hasFetched || isSaving"
           icon="cloud_upload"
-          label="저장"
+          label="Save"
           @click="emit('save')"
         />
       </div>

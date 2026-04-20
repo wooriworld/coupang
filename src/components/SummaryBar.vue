@@ -1,13 +1,14 @@
 <template>
   <div class="summary-bar">
-
     <!-- 중앙: 금액 + 서브 정보 -->
     <div class="summary-bar__main">
       <span class="summary-bar__meta">
-        전체 {{ formatAmount(summary.totalAmount) }}원 &nbsp;·&nbsp; {{ summary.checkedCount }}/{{ summary.totalCount }}개 선택
+        Total {{ formatAmount(summary.totalAmount) }}원 &nbsp;·&nbsp; {{ summary.checkedCount }}/{{
+          summary.totalCount
+        }}
+        items checked
       </span>
     </div>
-
   </div>
 </template>
 

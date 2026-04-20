@@ -3,8 +3,8 @@
     class="card-base section-gap user-item-panel"
     header-class="user-item-panel__header"
     icon="add_shopping_cart"
-    label="사용자 추가 목록"
-    :caption="`${items.length}개 항목`"
+    label="User-Created List"
+    :caption="`${items.length} items`"
     expand-icon-class="text-grey-5"
   >
     <!-- 입력 폼 -->
@@ -13,7 +13,7 @@
         v-model="inputName"
         outlined
         dense
-        placeholder="상품명"
+        placeholder="Product Name"
         class="user-item-panel__input-name"
         bg-color="white"
       />
@@ -22,7 +22,7 @@
         outlined
         dense
         type="number"
-        placeholder="금액"
+        placeholder="Price"
         suffix="원"
         class="user-item-panel__input-price"
         bg-color="white"
@@ -31,7 +31,7 @@
         unelevated
         color="primary"
         icon="add"
-        label="추가"
+        label="Add"
         dense
         no-caps
         class="user-item-panel__add-btn"
@@ -44,24 +44,15 @@
     <!-- 목록 없을 때 -->
     <div v-if="items.length === 0" class="user-item-panel__empty">
       <q-icon name="inbox" size="28px" class="q-mb-xs" />
-      <div>추가된 항목이 없습니다</div>
+      <div>No items added</div>
     </div>
 
     <!-- 상품 목록 -->
     <q-list v-else separator>
-      <q-item
-        v-for="item in items"
-        :key="item.id"
-        class="product-item product-item--checked"
-      >
+      <q-item v-for="item in items" :key="item.id" class="product-item product-item--checked">
         <!-- 체크박스 (항상 체크) -->
         <q-item-section avatar class="product-item__check-section">
-          <q-checkbox
-            :model-value="true"
-            color="primary"
-            dense
-            @click.stop
-          />
+          <q-checkbox :model-value="true" color="primary" dense @click.stop />
         </q-item-section>
 
         <!-- 기본 이미지 플레이스홀더 -->
@@ -76,7 +67,9 @@
           <q-item-label class="product-item__name product-item__name--checked">
             {{ item.name }}
           </q-item-label>
-          <q-item-label class="product-item__meta">{{ item.createdAt ? formatDate(item.createdAt) : '사용자 추가' }}</q-item-label>
+          <q-item-label class="product-item__meta">{{
+            item.createdAt ? formatDate(item.createdAt) : '사용자 추가'
+          }}</q-item-label>
         </q-item-section>
 
         <!-- 가격 + 삭제 -->
@@ -85,7 +78,9 @@
             <span
               :class="[
                 'product-item__price',
-                item.price < 0 ? 'product-item__price--negative-checked' : 'product-item__price--checked',
+                item.price < 0
+                  ? 'product-item__price--negative-checked'
+                  : 'product-item__price--checked',
               ]"
             >
               {{ item.price.toLocaleString('ko-KR') }}원
@@ -112,10 +107,7 @@ import { ref, computed, watch } from 'vue';
 import 'src/css/user-item-panel.css';
 import type { SelectedMonth } from 'src/models/app';
 import type { UserItem } from 'src/models/order';
-import {
-  loadUserItems,
-  saveUserItems,
-} from 'src/services/supabaseService';
+import { loadUserItems, saveUserItems } from 'src/services/supabaseService';
 
 const props = defineProps<{
   selectedMonth: SelectedMonth;

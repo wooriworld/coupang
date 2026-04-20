@@ -4,14 +4,19 @@
     class="chart-modal__open-btn"
     unelevated
     icon="bar_chart"
-    label="차트"
+    label="Chart"
     @click="dialogOpen = true"
   />
 
   <!-- 차트 모달 -->
-  <q-dialog v-model="dialogOpen" maximized transition-show="slide-up" transition-hide="slide-down" @show="loadChartData">
+  <q-dialog
+    v-model="dialogOpen"
+    maximized
+    transition-show="slide-up"
+    transition-hide="slide-down"
+    @show="loadChartData"
+  >
     <q-card class="chart-modal__card">
-
       <!-- 헤더 -->
       <q-bar class="chart-modal__header">
         <span class="chart-modal__header-title">월별 지출 현황</span>
@@ -20,7 +25,6 @@
       </q-bar>
 
       <div class="chart-modal__body">
-
         <!-- ApexCharts 혼합 차트 -->
         <div class="chart-modal__chart-wrap">
           <VueApexCharts
@@ -45,13 +49,16 @@
             <tbody>
               <tr v-for="row in tableRows" :key="row.month">
                 <td>{{ row.month }}</td>
-                <td class="chart-modal__table-total">{{ row.hasData ? formatAmt(row.totalAmount) + '원' : '-' }}</td>
-                <td class="chart-modal__table-checked">{{ row.hasData ? formatAmt(row.checkedAmount) + '원' : '-' }}</td>
+                <td class="chart-modal__table-total">
+                  {{ row.hasData ? formatAmt(row.totalAmount) + '원' : '-' }}
+                </td>
+                <td class="chart-modal__table-checked">
+                  {{ row.hasData ? formatAmt(row.checkedAmount) + '원' : '-' }}
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
-
       </div>
     </q-card>
   </q-dialog>
@@ -157,8 +164,7 @@ const chartOptions = computed<ApexOptions>(() => ({
     intersect: false,
     style: { fontSize: '13px' },
     y: {
-      formatter: (val: number | null) =>
-        val != null ? `${val.toLocaleString('ko-KR')}원` : '-',
+      formatter: (val: number | null) => (val != null ? `${val.toLocaleString('ko-KR')}원` : '-'),
     },
   },
   legend: { show: false },
