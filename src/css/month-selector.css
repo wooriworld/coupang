@@ -56,8 +56,7 @@
   font-weight: 700;
   color: #1a1a2e;
   letter-spacing: -0.3px;
-  line-height: 1.3;
-  text-align: center;
+  white-space: nowrap;
 }
 
 /* ─── 세로 구분선 ───────────────────────────────── */

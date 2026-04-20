@@ -6,9 +6,7 @@
         class="month-selector__trigger"
         :class="{ 'month-selector__trigger--disabled': loading }"
       >
-        <span class="month-selector__value"
-          >{{ String(year).slice(-2) }}년<br />{{ String(selectedMonth).padStart(2, '0') }}월</span
-        >
+        <span class="month-selector__value">{{ monthLabel }}</span>
         <q-spinner v-if="loading" color="grey-4" size="13px" class="month-selector__spinner" />
         <q-icon v-else name="keyboard_arrow_down" size="16px" class="month-selector__arrow" />
 
@@ -29,7 +27,7 @@
                 :disable="popupYear <= 2010"
                 @click.stop="popupYear--"
               />
-              <span class="month-selector__year-label">{{ popupYear }}년</span>
+              <span class="month-selector__year-label">{{ popupYear }}</span>
               <q-btn
                 flat
                 round
@@ -144,6 +142,9 @@ const year = ref(props.modelValue.year);
 const selectedMonth = ref(props.modelValue.month);
 const popupYear = ref(props.modelValue.year);
 const qDatePopup = ref<{ hide: () => void }>();
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monthLabel = computed(() => `${MONTHS[selectedMonth.value - 1]} ${year.value}`);
 
 const orderAmountLabel = computed(() =>
   props.summary !== undefined ? props.summary.checkedAmount.toLocaleString('ko-KR') + '원' : '—',
