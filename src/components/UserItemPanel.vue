@@ -18,35 +18,39 @@
         class="user-item-panel__input-name"
         bg-color="white"
       />
-      <q-input
-        :model-value="inputPriceText"
-        @update:model-value="onInputPrice"
-        outlined
-        dense
-        type="text"
-        inputmode="numeric"
-        placeholder="Price"
-        prefix="₩"
-        class="user-item-panel__input-price"
-        bg-color="white"
-      />
-      <q-btn
-        unelevated
-        color="primary"
-        icon="add"
-        label="Add"
-        dense
-        no-caps
-        class="user-item-panel__add-btn"
-        :disable="!inputName || !inputPriceValue || isLoading"
-        :loading="isLoading"
-        @click="addItem"
-      />
+      <div class="user-item-panel__price-add-row">
+        <q-input
+          :model-value="inputPriceText"
+          @update:model-value="onInputPrice"
+          outlined
+          dense
+          type="text"
+          inputmode="numeric"
+          placeholder="Price"
+          prefix="₩"
+          class="user-item-panel__input-price"
+          bg-color="white"
+        />
+        <q-btn
+          unelevated
+          color="primary"
+          icon="add"
+          label="Add"
+          dense
+          no-caps
+          class="user-item-panel__add-btn"
+          :disable="!inputName || !inputPriceValue || isLoading"
+          :loading="isLoading"
+          @click="addItem"
+        />
+      </div>
     </div>
 
     <!-- 목록 없을 때 -->
     <div v-if="items.length === 0" class="user-item-panel__empty">
-      <q-icon name="inbox" size="28px" class="q-mb-xs" />
+      <div class="user-item-panel__empty-icon-wrap">
+        <q-icon name="inventory_2" size="20px" />
+      </div>
       <div>No items added</div>
     </div>
 

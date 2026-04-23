@@ -1,7 +1,7 @@
 <template>
   <div class="card-base section-gap">
     <div class="month-selector__row">
-      <div class="month-selector__left">
+      <div class="month-selector__top-row">
         <!-- DatePicker 트리거 -->
         <div
           class="month-selector__trigger"
@@ -61,36 +61,6 @@
           </q-popup-proxy>
         </div>
 
-        <!-- 액션 버튼 그룹 -->
-        <div class="month-selector__actions">
-          <q-btn
-            v-if="showRefetch"
-            class="month-selector__btn month-selector__btn--refetch"
-            unelevated
-            :loading="isRefetching"
-            :disable="isRefetching || isSaving || isFetching"
-            icon="refresh"
-            label="Reload"
-            @click="emit('refetch')"
-          />
-          <ChartModal />
-          <q-btn
-            class="month-selector__btn month-selector__btn--save"
-            unelevated
-            :loading="isSaving"
-            :disable="!hasFetched || isSaving"
-            icon="cloud_upload"
-            label="Save"
-            @click="emit('save')"
-          />
-        </div>
-      </div>
-
-      <!-- 세로 구분선 -->
-      <q-separator vertical class="month-selector__divider" />
-
-      <!-- 금액 요약 -->
-      <div class="month-selector__amounts">
         <div class="month-selector__currency-toggle">
           <q-btn-toggle
             v-model="currencyMode"
@@ -113,22 +83,46 @@
             1 USD = {{ usdKrwRate?.toLocaleString('ko-KR', { maximumFractionDigits: 2 }) }} KRW
           </q-tooltip>
         </div>
+
+        <div class="month-selector__top-actions">
+          <q-btn
+            v-if="showRefetch"
+            class="month-selector__icon-btn month-selector__icon-btn--refresh"
+            unelevated
+            :loading="isRefetching"
+            :disable="isRefetching || isSaving || isFetching"
+            icon="refresh"
+            @click="emit('refetch')"
+          />
+          <ChartModal />
+          <q-btn
+            class="month-selector__icon-btn month-selector__icon-btn--save"
+            unelevated
+            :loading="isSaving"
+            :disable="!hasFetched || isSaving"
+            icon="file_download"
+            @click="emit('save')"
+          />
+        </div>
+      </div>
+
+      <!-- 금액 요약 -->
+      <div class="month-selector__amounts">
         <div class="month-selector__amount-item">
-          <q-icon name="receipt_long" size="13px" class="month-selector__amount-icon--order" />
+          <q-icon name="inventory_2" size="14px" class="month-selector__amount-icon" />
           <span class="month-selector__amount-label">Order</span>
           <span class="month-selector__amount-value month-selector__amount-value--order">{{
             orderAmountLabel
           }}</span>
         </div>
         <div class="month-selector__amount-item">
-          <q-icon name="add_shopping_cart" size="13px" class="month-selector__amount-icon--user" />
+          <q-icon name="add_shopping_cart" size="14px" class="month-selector__amount-icon" />
           <span class="month-selector__amount-label">Add</span>
-          <span class="month-selector__amount-value month-selector__amount-value--user">{{
+          <span class="month-selector__amount-value month-selector__amount-value--add">{{
             userAmountLabel
           }}</span>
         </div>
         <div class="month-selector__amount-item month-selector__amount-item--total">
-          <q-icon name="functions" size="13px" class="month-selector__amount-icon--total" />
           <span class="month-selector__amount-label">Total</span>
           <span class="month-selector__amount-value month-selector__amount-value--total">{{
             totalAmountLabel
@@ -141,7 +135,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onBeforeUnmount } from 'vue';
+import { ref, computed, watch, onBeforeUnmount, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
 import 'src/css/month-selector.css';
 import type { SelectedMonth } from 'src/models/app';
@@ -306,5 +300,11 @@ function showRateTooltipTemporarily() {
 
 onBeforeUnmount(() => {
   hideRateTooltip();
+});
+
+onMounted(() => {
+  // Always start with KRW selected on first render.
+  currencyMode.value = 'KRW';
+  usdKrwRate.value = null;
 });
 </script>

@@ -1,34 +1,32 @@
 /* ─── 카드 내부 행 ───────────────────────────────── */
 .month-selector__row {
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 12px;
-  padding: 10px 14px;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px 10px;
 }
 
-.month-selector__left {
+.month-selector__top-row {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ─── DatePicker 트리거 ──────────────────────────── */
 .month-selector__trigger {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
-  padding: 0 8px;
-  height: 30px;
-  width: 90px;
-  border: 1.5px solid #e0e0e0;
-  border-radius: 8px;
+  padding: 0 12px;
+  height: 30.4px;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #d7dbe2;
+  border-radius: 6px;
   cursor: pointer;
   background: #ffffff;
   user-select: none;
-  flex-shrink: 0;
   transition:
     border-color 0.15s,
     box-shadow 0.15s;
@@ -52,171 +50,164 @@
 }
 
 .month-selector__arrow {
-  color: #bdbdbd;
+  color: #69707d;
   flex-shrink: 0;
   position: absolute;
-  right: 6px;
+  right: 10px;
 }
 
 .month-selector__spinner {
   flex-shrink: 0;
   position: absolute;
-  right: 8px;
+  right: 10px;
 }
 
 /* ─── 날짜 텍스트 ───────────────────────────────── */
 .month-selector__value {
-  display: block;
-  width: 100%;
-  font-size: 11px;
-  font-weight: 700;
-  color: #1a1a2e;
-  letter-spacing: -0.3px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #39414d;
   white-space: nowrap;
   line-height: 1;
-  text-align: center;
-}
-
-/* ─── 세로 구분선 ───────────────────────────────── */
-.month-selector__divider {
-  height: 32px;
-  align-self: center;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 /* ─── 금액 요약 블록 ─────────────────────────────── */
 .month-selector__amounts {
-  display: grid;
-  grid-template-columns: 16px max-content max-content;
-  align-items: center;
-  justify-content: end;
-  column-gap: 6px;
-  row-gap: 6px;
-  min-width: 0;
-  flex: 0 0 auto;
+  border-top: 1px solid #e7ebf1;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
 }
 
 .month-selector__currency-toggle {
-  grid-column: 1 / -1;
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-bottom: 2px;
+  align-items: stretch;
+  justify-content: center;
 }
 
 .month-selector__currency-toggle .q-btn-group {
-  border: 1px solid #e0e0e0;
+  border: 1px solid #e2e6ed;
   border-radius: 6px;
   overflow: hidden;
+  background: #ffffff;
 }
 
 .month-selector__currency-toggle .q-btn {
-  min-height: 22px;
-  padding: 0 8px;
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.month-selector__rate-label {
-  font-size: 10px;
-  color: #9e9e9e;
-  white-space: nowrap;
-}
-
-.month-selector__amount-item {
-  display: contents;
-}
-
-.month-selector__amount-label {
-  font-size: 11px;
-  color: #bdbdbd;
-  font-weight: 500;
-  text-align: right;
-}
-
-.month-selector__amount-value {
-  font-size: 14px;
+  height: 30.4px;
+  min-height: 30.4px;
+  max-height: 30.4px;
+  min-width: 50px;
+  padding: 0 9px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: -0.4px;
-  white-space: nowrap;
-  text-align: right;
 }
 
-.month-selector__amount-value--order {
-  color: #e62418;
+.month-selector__currency-toggle .q-btn:not(.q-btn--active):not(.q-btn-item--active):not([aria-pressed='true']) {
+  background: #ffffff !important;
+  color: #374151 !important;
 }
 
-.month-selector__amount-value--user {
-  color: #1976d2;
-}
-
-.month-selector__amount-icon--order {
-  color: #e62418;
-  flex-shrink: 0;
-}
-
-.month-selector__amount-icon--user {
-  color: #1976d2;
-  flex-shrink: 0;
-}
-
-/* ─── 액션 버튼 그룹 ─────────────────────────────── */
-.month-selector__actions {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 4px;
-}
-
-.month-selector__btn {
-  height: 30px !important;
-  width: 90px !important;
-  border-radius: 6px !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.2px;
-  padding: 0 6px !important;
-}
-
-.month-selector__actions .chart-modal__open-btn {
-  height: 30px !important;
-  width: 90px !important;
-  font-size: 11px !important;
-  padding: 0 6px !important;
-}
-
-.month-selector__btn .q-icon,
-.month-selector__actions .chart-modal__open-btn .q-icon {
-  font-size: 14px !important;
-}
-
-.month-selector__btn--refetch {
-  background: #f0f0f5 !important;
-  color: #1a1a2e !important;
-}
-
-.month-selector__btn--save {
-  background: #e62418 !important;
+.month-selector__currency-toggle .q-btn.q-btn--active,
+.month-selector__currency-toggle .q-btn.q-btn-item--active,
+.month-selector__currency-toggle .q-btn[aria-pressed='true'],
+.month-selector__currency-toggle .q-btn.q-btn--active .q-btn__content,
+.month-selector__currency-toggle .q-btn.q-btn-item--active .q-btn__content,
+.month-selector__currency-toggle .q-btn[aria-pressed='true'] .q-btn__content,
+.month-selector__currency-toggle .q-btn.q-btn--active .q-btn__content span,
+.month-selector__currency-toggle .q-btn.q-btn-item--active .q-btn__content span,
+.month-selector__currency-toggle .q-btn[aria-pressed='true'] .q-btn__content span {
+  background: #ef1117 !important;
   color: #ffffff !important;
 }
 
-.month-selector__btn--refetch.disabled,
-.month-selector__btn--save.disabled {
-  opacity: 0.35 !important;
+.month-selector__currency-toggle .q-btn-group .q-btn + .q-btn {
+  border-left: 1px solid #e2e6ed;
 }
 
-.month-selector__amount-item--total {
+.month-selector__amount-item {
+  display: grid;
+  grid-template-columns: 20px 1fr auto;
+  align-items: center;
+  column-gap: 8px;
 }
 
-.month-selector__amount-icon--total {
-  color: #555;
-  flex-shrink: 0;
+.month-selector__amount-label {
+  font-size: 14px;
+  color: #3f4754;
+  font-weight: 500;
+}
+
+.month-selector__amount-value {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  color: #1f2630;
+}
+
+.month-selector__amount-value--order {
+  color: #ef1117;
+}
+
+.month-selector__amount-value--add {
+  color: #2563eb;
 }
 
 .month-selector__amount-value--total {
-  color: #1a1a2e;
+  color: #111827;
+}
+
+.month-selector__amount-icon {
+  color: #4f5866;
+}
+
+.month-selector__amount-item--total {
+  grid-template-columns: 1fr auto;
+  padding-top: 8px;
+  margin-top: 2px;
+  border-top: 1px solid #e7ebf1;
+}
+
+.month-selector__top-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.month-selector__icon-btn,
+.month-selector__top-actions .chart-modal__open-btn {
+  width: 30.4px !important;
+  min-width: 30.4px !important;
+  max-width: 30.4px !important;
+  height: 30.4px !important;
+  min-height: 30.4px !important;
+  max-height: 30.4px !important;
+  border-radius: 6px !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+.month-selector__icon-btn--refresh,
+.month-selector__top-actions .chart-modal__open-btn {
+  border: 1px solid #d7dbe2 !important;
+  background: #ffffff !important;
+  color: #5a6270 !important;
+}
+
+.month-selector__icon-btn--save {
+  background: #ef1117 !important;
+  color: #ffffff !important;
+}
+
+.month-selector__top-actions .chart-modal__open-btn .q-btn__content > span:not(.q-icon),
+.month-selector__icon-btn .q-btn__content > span:not(.q-icon) {
+  display: none;
+}
+
+.month-selector__top-actions .chart-modal__open-btn .q-icon,
+.month-selector__icon-btn .q-icon {
+  font-size: 17px !important;
 }
 
 /* ─── 커스텀 월 그리드 ──────────────────────────── */
@@ -277,6 +268,7 @@
   background: #fff;
   border-radius: 8px;
   overflow: hidden;
+  min-width: 232px;
 }
 
 .month-selector__year-nav {
