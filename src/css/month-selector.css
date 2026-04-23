@@ -2,17 +2,27 @@
 .month-selector__row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 12px;
   padding: 10px 14px;
+}
+
+.month-selector__left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 /* ─── DatePicker 트리거 ──────────────────────────── */
 .month-selector__trigger {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 9px 6px 9px;
+  justify-content: center;
+  position: relative;
+  padding: 0 8px;
+  height: 30px;
+  width: 90px;
   border: 1.5px solid #e0e0e0;
   border-radius: 8px;
   cursor: pointer;
@@ -44,37 +54,47 @@
 .month-selector__arrow {
   color: #bdbdbd;
   flex-shrink: 0;
+  position: absolute;
+  right: 6px;
 }
 
 .month-selector__spinner {
   flex-shrink: 0;
+  position: absolute;
+  right: 8px;
 }
 
 /* ─── 날짜 텍스트 ───────────────────────────────── */
 .month-selector__value {
-  font-size: 13px;
+  display: block;
+  width: 100%;
+  font-size: 11px;
   font-weight: 700;
   color: #1a1a2e;
   letter-spacing: -0.3px;
   white-space: nowrap;
+  line-height: 1;
+  text-align: center;
 }
 
 /* ─── 세로 구분선 ───────────────────────────────── */
 .month-selector__divider {
   height: 32px;
   align-self: center;
-  margin: 0 2px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ─── 금액 요약 블록 ─────────────────────────────── */
 .month-selector__amounts {
   display: grid;
-  grid-template-columns: 16px 35px auto;
+  grid-template-columns: 16px max-content max-content;
   align-items: center;
+  justify-content: end;
   column-gap: 6px;
   row-gap: 6px;
   min-width: 0;
-  flex: 1;
+  flex: 0 0 auto;
 }
 
 .month-selector__amount-item {
@@ -85,6 +105,7 @@
   font-size: 11px;
   color: #bdbdbd;
   font-weight: 500;
+  text-align: right;
 }
 
 .month-selector__amount-value {
@@ -92,6 +113,7 @@
   font-weight: 700;
   letter-spacing: -0.4px;
   white-space: nowrap;
+  text-align: right;
 }
 
 .month-selector__amount-value--order {
@@ -118,17 +140,28 @@
   flex-direction: column;
   align-items: stretch;
   gap: 4px;
-  flex-shrink: 0;
 }
 
 .month-selector__btn {
-  height: 32px !important;
-  min-width: 64px !important;
+  height: 30px !important;
+  width: 90px !important;
   border-radius: 6px !important;
-  font-size: 12px !important;
+  font-size: 11px !important;
   font-weight: 700 !important;
   letter-spacing: -0.2px;
-  padding: 0 8px !important;
+  padding: 0 6px !important;
+}
+
+.month-selector__actions .chart-modal__open-btn {
+  height: 30px !important;
+  width: 90px !important;
+  font-size: 11px !important;
+  padding: 0 6px !important;
+}
+
+.month-selector__btn .q-icon,
+.month-selector__actions .chart-modal__open-btn .q-icon {
+  font-size: 14px !important;
 }
 
 .month-selector__btn--refetch {

@@ -1,63 +1,89 @@
 <template>
   <div class="card-base section-gap">
     <div class="month-selector__row">
-      <!-- DatePicker 트리거 -->
-      <div
-        class="month-selector__trigger"
-        :class="{ 'month-selector__trigger--disabled': loading }"
-      >
-        <span class="month-selector__value">{{ monthLabel }}</span>
-        <q-spinner v-if="loading" color="grey-4" size="13px" class="month-selector__spinner" />
-        <q-icon v-else name="keyboard_arrow_down" size="16px" class="month-selector__arrow" />
-
-        <q-popup-proxy
-          ref="qDatePopup"
-          transition-show="scale"
-          transition-hide="scale"
-          :disable="loading"
+      <div class="month-selector__left">
+        <!-- DatePicker 트리거 -->
+        <div
+          class="month-selector__trigger"
+          :class="{ 'month-selector__trigger--disabled': loading }"
         >
-          <div class="month-selector__date-popup">
-            <div class="month-selector__year-nav">
-              <q-btn
-                flat
-                round
-                dense
-                icon="chevron_left"
-                class="month-selector__year-btn"
-                :disable="popupYear <= 2010"
-                @click.stop="popupYear--"
-              />
-              <span class="month-selector__year-label">{{ popupYear }}</span>
-              <q-btn
-                flat
-                round
-                dense
-                icon="chevron_right"
-                class="month-selector__year-btn"
-                :disable="popupYear >= currentYear"
-                @click.stop="popupYear++"
-              />
+          <span class="month-selector__value">{{ monthLabel }}</span>
+          <q-spinner v-if="loading" color="grey-4" size="11px" class="month-selector__spinner" />
+          <q-icon v-else name="keyboard_arrow_down" size="14px" class="month-selector__arrow" />
+
+          <q-popup-proxy
+            ref="qDatePopup"
+            transition-show="scale"
+            transition-hide="scale"
+            :disable="loading"
+          >
+            <div class="month-selector__date-popup">
+              <div class="month-selector__year-nav">
+                <q-btn
+                  flat
+                  round
+                  dense
+                  icon="chevron_left"
+                  class="month-selector__year-btn"
+                  :disable="popupYear <= 2010"
+                  @click.stop="popupYear--"
+                />
+                <span class="month-selector__year-label">{{ popupYear }}</span>
+                <q-btn
+                  flat
+                  round
+                  dense
+                  icon="chevron_right"
+                  class="month-selector__year-btn"
+                  :disable="popupYear >= currentYear"
+                  @click.stop="popupYear++"
+                />
+              </div>
+              <div class="month-selector__month-grid">
+                <button
+                  v-for="(name, idx) in MONTHS"
+                  :key="idx"
+                  class="month-selector__month-btn"
+                  :class="{
+                    'month-selector__month-btn--selected':
+                      idx + 1 === selectedMonth && popupYear === year,
+                    'month-selector__month-btn--has-data': hasMonthData(idx + 1),
+                    'month-selector__month-btn--disabled': isMonthDisabled(idx + 1),
+                  }"
+                  :disabled="isMonthDisabled(idx + 1)"
+                  @click="onMonthClick(idx + 1)"
+                >
+                  {{ name }}
+                  <span v-if="hasMonthData(idx + 1)" class="month-selector__month-dot" />
+                </button>
+              </div>
             </div>
-            <div class="month-selector__month-grid">
-              <button
-                v-for="(name, idx) in MONTHS"
-                :key="idx"
-                class="month-selector__month-btn"
-                :class="{
-                  'month-selector__month-btn--selected':
-                    idx + 1 === selectedMonth && popupYear === year,
-                  'month-selector__month-btn--has-data': hasMonthData(idx + 1),
-                  'month-selector__month-btn--disabled': isMonthDisabled(idx + 1),
-                }"
-                :disabled="isMonthDisabled(idx + 1)"
-                @click="onMonthClick(idx + 1)"
-              >
-                {{ name }}
-                <span v-if="hasMonthData(idx + 1)" class="month-selector__month-dot" />
-              </button>
-            </div>
-          </div>
-        </q-popup-proxy>
+          </q-popup-proxy>
+        </div>
+
+        <!-- 액션 버튼 그룹 -->
+        <div class="month-selector__actions">
+          <q-btn
+            v-if="showRefetch"
+            class="month-selector__btn month-selector__btn--refetch"
+            unelevated
+            :loading="isRefetching"
+            :disable="isRefetching || isSaving || isFetching"
+            icon="refresh"
+            label="Reload"
+            @click="emit('refetch')"
+          />
+          <ChartModal />
+          <q-btn
+            class="month-selector__btn month-selector__btn--save"
+            unelevated
+            :loading="isSaving"
+            :disable="!hasFetched || isSaving"
+            icon="cloud_upload"
+            label="Save"
+            @click="emit('save')"
+          />
+        </div>
       </div>
 
       <!-- 세로 구분선 -->
@@ -88,32 +114,6 @@
         </div>
       </div>
 
-      <!-- 세로 구분선 -->
-      <q-separator vertical class="month-selector__divider" />
-
-      <!-- 액션 버튼 그룹 -->
-      <div class="month-selector__actions">
-        <q-btn
-          v-if="showRefetch"
-          class="month-selector__btn month-selector__btn--refetch"
-          unelevated
-          :loading="isRefetching"
-          :disable="isRefetching || isSaving || isFetching"
-          icon="refresh"
-          label="Reload"
-          @click="emit('refetch')"
-        />
-        <ChartModal />
-        <q-btn
-          class="month-selector__btn month-selector__btn--save"
-          unelevated
-          :loading="isSaving"
-          :disable="!hasFetched || isSaving"
-          icon="cloud_upload"
-          label="Save"
-          @click="emit('save')"
-        />
-      </div>
     </div>
   </div>
 </template>
