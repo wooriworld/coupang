@@ -98,7 +98,7 @@
                 checkedIds.has(row.id) ? 'product-item__price--checked' : '',
               ]"
             >
-              ₩ {{ row.price.toLocaleString('ko-KR') }}
+              {{ formatPrice(row.price) }}
             </span>
           </q-item-section>
         </q-item>
@@ -111,14 +111,25 @@
 import 'src/css/product-list.css';
 import type { ProductRow } from 'src/models/order';
 
-defineProps<{
+const props = defineProps<{
   products: ProductRow[];
   checkedIds: Set<string>;
   loading?: boolean;
   hasFetched?: boolean;
+  currencyMode?: 'KRW' | 'USD';
+  usdKrwRate?: number | null;
 }>();
 
 const emit = defineEmits<{
   toggle: [id: string];
 }>();
+
+function formatPrice(value: number): string {
+  if (props.currencyMode === 'USD') {
+    if (!props.usdKrwRate) return '$ -';
+    const usdValue = value / props.usdKrwRate;
+    return '$ ' + usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  return '₩ ' + value.toLocaleString('ko-KR');
+}
 </script>

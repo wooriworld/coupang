@@ -25,10 +25,16 @@
       @fetch="onFetch"
       @save="onSave"
       @refetch="onRefetch"
+      @currency-change="onCurrencyChange"
     />
 
     <!-- 사용자 추가 목록 -->
-    <UserItemPanel :selected-month="selectedMonth" @update:user-total="userTotal = $event" />
+    <UserItemPanel
+      :selected-month="selectedMonth"
+      :currency-mode="currencyMode"
+      :usd-krw-rate="usdKrwRate"
+      @update:user-total="userTotal = $event"
+    />
 
     <!-- 저장 실패 배너 -->
     <q-banner
@@ -78,12 +84,16 @@
       :checked-ids="currentCheckedIds"
       :loading="isFetching"
       :has-fetched="hasFetched"
+      :currency-mode="currencyMode"
+      :usd-krw-rate="usdKrwRate"
       @toggle="onToggle"
     />
 
     <!-- 하단 고정 금액 집계 바 -->
     <SummaryBar
       :summary="summary"
+      :currency-mode="currencyMode"
+      :usd-krw-rate="usdKrwRate"
       @toggle-all="onToggleAll"
     />
   </q-page>
@@ -139,6 +149,8 @@ const errorMessage = ref('');
 const saveErrorMessage = ref('');
 const showCookieWarning = ref(false);
 const hasFetched = ref(false);
+const currencyMode = ref<'KRW' | 'USD'>('KRW');
+const usdKrwRate = ref<number | null>(null);
 
 // ─────────────────────────────────────────────
 // Supabase 기반 has-data 월 목록
@@ -358,5 +370,10 @@ function onToggleAll(checked: boolean) {
   } else {
     currentCheckedIds.value = new Set();
   }
+}
+
+function onCurrencyChange(value: { mode: 'KRW' | 'USD'; usdKrwRate: number | null }) {
+  currencyMode.value = value.mode;
+  usdKrwRate.value = value.usdKrwRate;
 }
 </script>

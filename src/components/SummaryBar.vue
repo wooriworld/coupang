@@ -3,7 +3,7 @@
     <!-- 중앙: 금액 + 서브 정보 -->
     <div class="summary-bar__main">
       <span class="summary-bar__meta">
-        Total ₩ {{ formatAmount(summary.totalAmount) }} &nbsp;·&nbsp; {{ summary.checkedCount }}/{{
+        Total {{ formatAmount(summary.totalAmount) }} &nbsp;·&nbsp; {{ summary.checkedCount }}/{{
           summary.totalCount
         }}
         items checked
@@ -16,11 +16,18 @@
 import 'src/css/summary-bar.css';
 import type { OrderSummary } from 'src/models/order';
 
-defineProps<{
+const props = defineProps<{
   summary: OrderSummary;
+  currencyMode?: 'KRW' | 'USD';
+  usdKrwRate?: number | null;
 }>();
 
 function formatAmount(value: number): string {
-  return value.toLocaleString('ko-KR');
+  if (props.currencyMode === 'USD') {
+    if (!props.usdKrwRate) return '$ -';
+    const usdValue = value / props.usdKrwRate;
+    return '$ ' + usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  return '₩ ' + value.toLocaleString('ko-KR');
 }
 </script>

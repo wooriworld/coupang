@@ -83,7 +83,7 @@
                   : 'product-item__price--checked',
               ]"
             >
-              {{ item.price.toLocaleString('ko-KR') }}원
+              {{ formatPrice(item.price) }}
             </span>
             <q-btn
               flat
@@ -111,6 +111,8 @@ import { loadUserItems, saveUserItems } from 'src/services/supabaseService';
 
 const props = defineProps<{
   selectedMonth: SelectedMonth;
+  currencyMode?: 'KRW' | 'USD';
+  usdKrwRate?: number | null;
 }>();
 
 const emit = defineEmits<{
@@ -129,6 +131,15 @@ watch(userTotal, (val) => emit('update:userTotal', val), { immediate: true });
 
 function formatDate(yyyymmdd: string): string {
   return `${yyyymmdd.slice(0, 4)}.${yyyymmdd.slice(4, 6)}.${yyyymmdd.slice(6, 8)}`;
+}
+
+function formatPrice(value: number): string {
+  if (props.currencyMode === 'USD') {
+    if (!props.usdKrwRate) return '$ -';
+    const usdValue = value / props.usdKrwRate;
+    return '$ ' + usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  return value.toLocaleString('ko-KR') + '원';
 }
 
 // ─── 로드 ─────────────────────────────────────────

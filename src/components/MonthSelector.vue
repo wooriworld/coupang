@@ -91,6 +91,28 @@
 
       <!-- 금액 요약 -->
       <div class="month-selector__amounts">
+        <div class="month-selector__currency-toggle">
+          <q-btn-toggle
+            v-model="currencyMode"
+            unelevated
+            no-caps
+            dense
+            toggle-color="primary"
+            :options="[
+              { label: 'KRW', value: 'KRW' },
+              { label: 'USD', value: 'USD' },
+            ]"
+          />
+          <q-tooltip
+            v-model="showRateTooltip"
+            no-parent-event
+            anchor="top middle"
+            self="bottom middle"
+            :offset="[0, 8]"
+          >
+            1 USD = {{ usdKrwRate?.toLocaleString('ko-KR', { maximumFractionDigits: 2 }) }} KRW
+          </q-tooltip>
+        </div>
         <div class="month-selector__amount-item">
           <q-icon name="receipt_long" size="13px" class="month-selector__amount-icon--order" />
           <span class="month-selector__amount-label">Order</span>
@@ -119,7 +141,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onBeforeUnmount } from 'vue';
+import { useQuasar } from 'quasar';
 import 'src/css/month-selector.css';
 import type { SelectedMonth } from 'src/models/app';
 import type { OrderSummary } from 'src/models/order';
@@ -139,11 +162,14 @@ const props = defineProps<{
   hasFetched?: boolean;
 }>();
 
+const $q = useQuasar();
+
 const emit = defineEmits<{
   'update:modelValue': [value: SelectedMonth];
   fetch: [];
   save: [];
   refetch: [];
+  'currency-change': [value: { mode: 'KRW' | 'USD'; usdKrwRate: number | null }];
 }>();
 
 const currentYear = new Date().getFullYear();
@@ -151,6 +177,11 @@ const year = ref(props.modelValue.year);
 const selectedMonth = ref(props.modelValue.month);
 const popupYear = ref(props.modelValue.year);
 const qDatePopup = ref<{ hide: () => void }>();
+const currencyMode = ref<'KRW' | 'USD'>('KRW');
+const usdKrwRate = ref<number | null>(null);
+const isFetchingRate = ref(false);
+const showRateTooltip = ref(false);
+let rateTooltipTimer: ReturnType<typeof setTimeout> | null = null;
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -169,19 +200,15 @@ function onMonthClick(month: number) {
 }
 const monthLabel = computed(() => `${MONTHS[selectedMonth.value - 1]} ${year.value}`);
 
-const orderAmountLabel = computed(() =>
-  props.summary !== undefined ? '₩ ' + props.summary.checkedAmount.toLocaleString('ko-KR') : '—',
-);
+const orderAmountLabel = computed(() => formatCurrencyValue(props.summary?.checkedAmount));
 
-const userAmountLabel = computed(() =>
-  props.userTotal !== undefined ? '₩ ' + props.userTotal.toLocaleString('ko-KR') : '—',
-);
+const userAmountLabel = computed(() => formatCurrencyValue(props.userTotal));
 
 const totalAmountLabel = computed(() => {
   const order = props.summary?.checkedAmount;
   const user = props.userTotal;
   if (order === undefined && user === undefined) return '—';
-  return '₩ ' + ((order ?? 0) + (user ?? 0)).toLocaleString('ko-KR');
+  return formatCurrencyValue((order ?? 0) + (user ?? 0));
 });
 
 watch(
@@ -202,4 +229,82 @@ function selectMonth(m: number) {
 function emitUpdate() {
   emit('update:modelValue', { year: year.value, month: selectedMonth.value });
 }
+
+watch(currencyMode, async (mode) => {
+  if (mode !== 'USD') {
+    hideRateTooltip();
+    return;
+  }
+
+  if (usdKrwRate.value) {
+    showRateTooltipTemporarily();
+    return;
+  }
+
+  if (!isFetchingRate.value) {
+    await fetchUsdKrwRate();
+  }
+});
+
+watch(
+  [currencyMode, usdKrwRate],
+  () => {
+    emit('currency-change', {
+      mode: currencyMode.value,
+      usdKrwRate: usdKrwRate.value,
+    });
+  },
+  { immediate: true },
+);
+
+function formatCurrencyValue(value: number | undefined): string {
+  if (value === undefined) return '—';
+  if (currencyMode.value === 'KRW') return '₩ ' + value.toLocaleString('ko-KR');
+  if (!usdKrwRate.value) return '$ -';
+  const usdValue = value / usdKrwRate.value;
+  return '$ ' + usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+async function fetchUsdKrwRate() {
+  isFetchingRate.value = true;
+  try {
+    const response = await fetch('https://open.er-api.com/v6/latest/USD');
+    if (!response.ok) throw new Error('환율 응답 실패');
+    const data = (await response.json()) as { rates?: { KRW?: number } };
+    const rate = data.rates?.KRW;
+    if (!rate) throw new Error('KRW 환율 없음');
+    usdKrwRate.value = rate;
+    showRateTooltipTemporarily();
+  } catch {
+    currencyMode.value = 'KRW';
+    $q.notify({
+      type: 'warning',
+      message: 'USD 환율을 가져오지 못해 원화로 표시합니다.',
+    });
+  } finally {
+    isFetchingRate.value = false;
+  }
+}
+
+function hideRateTooltip() {
+  showRateTooltip.value = false;
+  if (rateTooltipTimer) {
+    clearTimeout(rateTooltipTimer);
+    rateTooltipTimer = null;
+  }
+}
+
+function showRateTooltipTemporarily() {
+  if (!usdKrwRate.value) return;
+  hideRateTooltip();
+  showRateTooltip.value = true;
+  rateTooltipTimer = setTimeout(() => {
+    showRateTooltip.value = false;
+    rateTooltipTimer = null;
+  }, 3000);
+}
+
+onBeforeUnmount(() => {
+  hideRateTooltip();
+});
 </script>
