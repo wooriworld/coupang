@@ -94,7 +94,7 @@
             icon="refresh"
             @click="emit('refetch')"
           />
-          <ChartModal />
+          <ChartModal :currency-mode="currencyMode" :usd-krw-rate="usdKrwRate" />
           <q-btn
             class="month-selector__icon-btn month-selector__icon-btn--save"
             unelevated

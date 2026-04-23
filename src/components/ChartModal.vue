@@ -49,10 +49,10 @@
               <tr v-for="row in tableRows" :key="row.month">
                 <td>{{ row.month }}</td>
                 <td class="chart-modal__table-total">
-                  {{ row.hasData ? formatAmt(row.totalAmount) + '원' : '-' }}
+                  {{ row.hasData ? formatAmt(toDisplayAmount(row.totalAmount), true) : '-' }}
                 </td>
                 <td class="chart-modal__table-checked">
-                  {{ row.hasData ? formatAmt(row.checkedAmount) + '원' : '-' }}
+                  {{ row.hasData ? formatAmt(toDisplayAmount(row.checkedAmount), true) : '-' }}
                 </td>
               </tr>
             </tbody>
@@ -70,6 +70,11 @@ import type { ApexOptions } from 'apexcharts';
 import 'src/css/chart-modal.css';
 import { useChartData } from 'src/composables/useChartData';
 
+const props = defineProps<{
+  currencyMode?: 'KRW' | 'USD';
+  usdKrwRate?: number | null;
+}>();
+
 const dialogOpen = ref(false);
 const { chartData, loadChartData } = useChartData();
 
@@ -81,6 +86,22 @@ const chartHeight = computed(() => {
   return window.innerHeight < 500 ? 180 : 260;
 });
 
+function toDisplayAmount(value: number): number | null {
+  if ((props.currencyMode ?? 'KRW') === 'KRW') return value;
+  if (!props.usdKrwRate) return null;
+  return value / props.usdKrwRate;
+}
+
+function formatAmt(value: number | null, withSymbol = false): string {
+  if (value == null) return '-';
+  if ((props.currencyMode ?? 'KRW') === 'KRW') {
+    const text = value.toLocaleString('ko-KR');
+    return withSymbol ? `₩ ${text}` : text;
+  }
+  const text = value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return withSymbol ? `$ ${text}` : text;
+}
+
 // ─────────────────────────────────────────────
 // ApexCharts 시리즈
 // ─────────────────────────────────────────────
@@ -88,12 +109,12 @@ const series = computed(() => [
   {
     name: 'Total Amount',
     type: 'bar',
-    data: chartData.value.map((d) => (d.hasData ? d.totalAmount : null)),
+    data: chartData.value.map((d) => (d.hasData ? toDisplayAmount(d.totalAmount) : null)),
   },
   {
     name: '체크금액',
     type: 'line',
-    data: chartData.value.map((d) => (d.hasData ? d.checkedAmount : null)),
+    data: chartData.value.map((d) => (d.hasData ? toDisplayAmount(d.checkedAmount) : null)),
   },
 ]);
 
@@ -126,6 +147,9 @@ const chartOptions = computed<ApexOptions>(() => ({
     formatter: (val: string | number | number[]) => {
       const v = typeof val === 'number' ? val : 0;
       if (!v) return '';
+      if ((props.currencyMode ?? 'KRW') === 'USD') {
+        return `$${v.toLocaleString('en-US', { maximumFractionDigits: 1 })}`;
+      }
       return v >= 10000 ? `${(v / 10000).toFixed(1)}만` : `${v.toLocaleString('ko-KR')}`;
     },
     style: {
@@ -163,7 +187,7 @@ const chartOptions = computed<ApexOptions>(() => ({
     intersect: false,
     style: { fontSize: '13px' },
     y: {
-      formatter: (val: number | null) => (val != null ? `${val.toLocaleString('ko-KR')}원` : '-'),
+      formatter: (val: number | null) => formatAmt(val, true),
     },
   },
   legend: { show: false },
@@ -173,8 +197,4 @@ const chartOptions = computed<ApexOptions>(() => ({
 // 테이블 (최신 월 우선)
 // ─────────────────────────────────────────────
 const tableRows = computed(() => [...chartData.value].reverse());
-
-function formatAmt(v: number): string {
-  return v.toLocaleString('ko-KR');
-}
 </script>
