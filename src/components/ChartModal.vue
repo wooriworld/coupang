@@ -4,7 +4,6 @@
     class="chart-modal__open-btn"
     unelevated
     icon="bar_chart"
-    label="Chart"
     @click="dialogOpen = true"
   />
 
