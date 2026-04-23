@@ -1,5 +1,6 @@
 <template>
   <q-expansion-item
+    v-model="isExpanded"
     class="card-base section-gap user-item-panel"
     header-class="user-item-panel__header"
     icon="add_shopping_cart"
@@ -123,6 +124,7 @@ const emit = defineEmits<{
 
 const items = ref<UserItem[]>([]);
 const isLoading = ref(false);
+const isExpanded = ref(false);
 
 const yyyymm = computed(
   () => `${props.selectedMonth.year}${String(props.selectedMonth.month).padStart(2, '0')}`,
@@ -154,12 +156,28 @@ async function loadItems() {
   }
 }
 
-watch(yyyymm, loadItems, { immediate: true });
+watch(
+  yyyymm,
+  (newVal, oldVal) => {
+    if (oldVal !== undefined && newVal !== oldVal) {
+      isExpanded.value = false;
+      resetInputs();
+    }
+    void loadItems();
+  },
+  { immediate: true },
+);
 
 // ─── 입력 상태 ────────────────────────────────────
 const inputName = ref('');
 const inputPriceText = ref('');
 const inputPriceValue = ref<number | null>(null);
+
+function resetInputs() {
+  inputName.value = '';
+  inputPriceText.value = '';
+  inputPriceValue.value = null;
+}
 
 function onInputPrice(value: string | number | null) {
   const raw = String(value ?? '');
@@ -188,9 +206,7 @@ async function addItem() {
     createdAt,
   };
   items.value = [...items.value, newItem];
-  inputName.value = '';
-  inputPriceText.value = '';
-  inputPriceValue.value = null;
+  resetInputs();
   await saveUserItems(yyyymm.value, items.value);
 }
 
