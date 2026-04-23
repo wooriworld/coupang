@@ -18,12 +18,14 @@
         bg-color="white"
       />
       <q-input
-        v-model.number="inputPrice"
+        :model-value="inputPriceText"
+        @update:model-value="onInputPrice"
         outlined
         dense
-        type="number"
+        type="text"
+        inputmode="numeric"
         placeholder="Price"
-        suffix="원"
+        prefix="₩"
         class="user-item-panel__input-price"
         bg-color="white"
       />
@@ -35,7 +37,7 @@
         dense
         no-caps
         class="user-item-panel__add-btn"
-        :disable="!inputName || !inputPrice || isLoading"
+        :disable="!inputName || !inputPriceValue || isLoading"
         :loading="isLoading"
         @click="addItem"
       />
@@ -139,7 +141,7 @@ function formatPrice(value: number): string {
     const usdValue = value / props.usdKrwRate;
     return '$ ' + usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
-  return value.toLocaleString('ko-KR') + '원';
+  return '₩ ' + value.toLocaleString('ko-KR');
 }
 
 // ─── 로드 ─────────────────────────────────────────
@@ -156,22 +158,39 @@ watch(yyyymm, loadItems, { immediate: true });
 
 // ─── 입력 상태 ────────────────────────────────────
 const inputName = ref('');
-const inputPrice = ref<number | null>(null);
+const inputPriceText = ref('');
+const inputPriceValue = ref<number | null>(null);
+
+function onInputPrice(value: string | number | null) {
+  const raw = String(value ?? '');
+  const isNegative = raw.trim().startsWith('-');
+  const digits = raw.replace(/\D/g, '');
+  if (!digits) {
+    inputPriceText.value = '';
+    inputPriceValue.value = null;
+    return;
+  }
+
+  const numericValue = Number(digits);
+  inputPriceText.value = `${isNegative ? '-' : ''}${numericValue.toLocaleString('ko-KR')}`;
+  inputPriceValue.value = isNegative ? -numericValue : numericValue;
+}
 
 // ─── 추가 ─────────────────────────────────────────
 async function addItem() {
-  if (!inputName.value || !inputPrice.value) return;
+  if (!inputName.value || !inputPriceValue.value) return;
   const now = new Date();
   const createdAt = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
   const newItem: UserItem = {
     id: `user-${Date.now()}`,
     name: inputName.value,
-    price: inputPrice.value,
+    price: inputPriceValue.value,
     createdAt,
   };
   items.value = [...items.value, newItem];
   inputName.value = '';
-  inputPrice.value = null;
+  inputPriceText.value = '';
+  inputPriceValue.value = null;
   await saveUserItems(yyyymm.value, items.value);
 }
 
