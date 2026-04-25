@@ -95,14 +95,6 @@
             @click="emit('refetch')"
           />
           <ChartModal :currency-mode="currencyMode" :usd-krw-rate="usdKrwRate" />
-          <q-btn
-            class="month-selector__icon-btn month-selector__icon-btn--save"
-            unelevated
-            :loading="isSaving"
-            :disable="!hasFetched || isSaving"
-            icon="file_download"
-            @click="emit('save')"
-          />
         </div>
       </div>
 

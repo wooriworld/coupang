@@ -317,6 +317,19 @@ function onToggle(id: string) {
     set.add(id);
   }
   currentCheckedIds.value = set;
+  void saveCheckedSelection(set);
+}
+
+async function saveCheckedSelection(checkedIds: Set<string>) {
+  const yyyymm = `${selectedMonth.year}${String(selectedMonth.month).padStart(2, '0')}`;
+  saveErrorMessage.value = '';
+  try {
+    await saveOrders(yyyymm, currentProducts.value, checkedIds);
+    addToDataMonths(selectedMonth.year, selectedMonth.month);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : '알 수 없는 오류';
+    saveErrorMessage.value = `자동 저장 실패: ${msg}`;
+  }
 }
 
 async function onRefetch() {
