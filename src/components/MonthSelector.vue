@@ -48,9 +48,7 @@
                     'month-selector__month-btn--selected':
                       idx + 1 === selectedMonth && popupYear === year,
                     'month-selector__month-btn--has-data': hasMonthData(idx + 1),
-                    'month-selector__month-btn--disabled': isMonthDisabled(idx + 1),
                   }"
-                  :disabled="isMonthDisabled(idx + 1)"
                   @click="onMonthClick(idx + 1)"
                 >
                   {{ name }}
@@ -121,7 +119,6 @@
           }}</span>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -173,10 +170,6 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 
 function hasMonthData(month: number): boolean {
   return (props.allMonthsWithData?.get(popupYear.value) ?? []).includes(month);
-}
-
-function isMonthDisabled(month: number): boolean {
-  return popupYear.value === currentYear && month > new Date().getMonth() + 1;
 }
 
 function onMonthClick(month: number) {
@@ -248,7 +241,9 @@ function formatCurrencyValue(value: number | undefined): string {
   if (currencyMode.value === 'KRW') return '₩ ' + value.toLocaleString('ko-KR');
   if (!usdKrwRate.value) return '$ -';
   const usdValue = value / usdKrwRate.value;
-  return '$ ' + usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return (
+    '$ ' + usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  );
 }
 
 async function fetchUsdKrwRate() {
