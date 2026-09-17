@@ -43,6 +43,7 @@
                 <th>Date</th>
                 <th>Total Amount</th>
                 <th>Checked Amount</th>
+                <th>Ratio</th>
               </tr>
             </thead>
             <tbody>
@@ -53,6 +54,9 @@
                 </td>
                 <td class="chart-modal__table-checked">
                   {{ row.hasData ? formatAmt(toDisplayAmount(row.checkedAmount), true) : '-' }}
+                </td>
+                <td class="chart-modal__table-ratio">
+                  {{ formatRatio(row) }}
                 </td>
               </tr>
             </tbody>
@@ -69,6 +73,7 @@ import VueApexCharts from 'vue3-apexcharts';
 import type { ApexOptions } from 'apexcharts';
 import 'src/css/chart-modal.css';
 import { useChartData } from 'src/composables/useChartData';
+import type { ChartMonthData } from 'src/composables/useChartData';
 
 const props = defineProps<{
   currencyMode?: 'KRW' | 'USD';
@@ -100,6 +105,12 @@ function formatAmt(value: number | null, withSymbol = false): string {
   }
   const text = value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   return withSymbol ? `$ ${text}` : text;
+}
+
+function formatRatio(row: ChartMonthData): string {
+  if (!row.hasData || row.totalAmount <= 0) return '-';
+  const ratio = (row.checkedAmount / row.totalAmount) * 100;
+  return `${ratio.toFixed(1)}%`;
 }
 
 // ─────────────────────────────────────────────

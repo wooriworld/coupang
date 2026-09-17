@@ -110,6 +110,11 @@
   font-weight: 600;
 }
 
+.chart-modal__table-ratio {
+  color: #666;
+  font-weight: 600;
+}
+
 /* ─── 모바일 가로 모드: 테이블 숨김 ─────────────── */
 @media (orientation: landscape) and (max-height: 500px) {
   .chart-modal__separator,
