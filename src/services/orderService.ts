@@ -1,7 +1,7 @@
 /**
  * 쿠팡 주문 목록 조회 서비스
  *
- * - API: GET /api/ssr/api/myorders/model/page (Vite 프록시 → mc.coupang.com)
+ * - API: GET {BASE_URL}/ssr/api/myorders/model/page (개발: Vite 프록시 / 운영: Cloudflare Worker → mc.coupang.com)
  * - 페이지네이션: pageIndex 0부터 증가, 해당 월보다 이전 날짜 항목 발견 시 종료
  * - 취소/반품 그룹은 목록에서 제외
  */
@@ -113,7 +113,7 @@ export async function fetchOrders(
           size: API_CONFIG.PAGE_SIZE,
         },
         headers: {
-          // 브라우저 forbidden-header 우회: Vite 프록시에서 Cookie 헤더로 변환
+          // 브라우저 forbidden-header 우회: 프록시(Vite / Cloudflare Worker)에서 Cookie 헤더로 변환
           'X-Coupang-Cookie': cookie,
         },
       },

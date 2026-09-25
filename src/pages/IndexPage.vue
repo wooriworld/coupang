@@ -1,8 +1,7 @@
 <template>
   <q-page class="app-page">
-    <!-- 쿠키 설정 패널 (localhost 전용) -->
+    <!-- 쿠키 설정 패널 -->
     <CookiePanel
-      v-if="isLocalhost"
       :cookie-state="cookieState"
       @save="onCookieSave"
       @clear="onCookieClear"
@@ -50,9 +49,9 @@
       </template>
     </q-banner>
 
-    <!-- 쿠키 미설정 안내 배너 (localhost 전용) -->
+    <!-- 쿠키 미설정 안내 배너 -->
     <q-banner
-      v-if="isLocalhost && showCookieWarning"
+      v-if="showCookieWarning"
       dense
       rounded
       class="bg-orange-1 text-orange-9 section-gap"
@@ -132,10 +131,6 @@ import {
 
 const $q = useQuasar();
 const isDesktop = computed(() => $q.platform.is.desktop);
-const isLocalhost = computed(
-  () =>
-    window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
-);
 
 // ─────────────────────────────────────────────
 // 상태
