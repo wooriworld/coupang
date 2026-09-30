@@ -24,12 +24,15 @@ export async function saveOrders(
   products: ProductRow[],
   checkedIds: Set<string>,
 ): Promise<void> {
-  const { error } = await supabase.from('orders').upsert({
-    yyyymm,
-    saved_at: new Date().toISOString(),
-    products,
-    checked_ids: Array.from(checkedIds),
-  });
+  const { error } = await supabase.from('orders').upsert(
+    {
+      yyyymm,
+      saved_at: new Date().toISOString(),
+      products,
+      checked_ids: Array.from(checkedIds),
+    },
+    { onConflict: 'yyyymm' },
+  );
 
   if (error) throw new Error(error.message);
 }
@@ -65,7 +68,7 @@ export async function loadUserItems(yyyymm: string): Promise<UserItem[]> {
 }
 
 export async function saveUserItems(yyyymm: string, items: UserItem[]): Promise<void> {
-  const { error } = await supabase.from('user_items').upsert({ yyyymm, items });
+  const { error } = await supabase.from('user_items').upsert({ yyyymm, items }, { onConflict: 'yyyymm' });
 
   if (error) throw new Error(error.message);
 }
