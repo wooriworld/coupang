@@ -2,6 +2,7 @@
   <q-page class="app-page">
     <!-- 쿠키 설정 패널 -->
     <CookiePanel
+      v-if="isOwner"
       :cookie-state="cookieState"
       @save="onCookieSave"
       @clear="onCookieClear"
@@ -18,7 +19,7 @@
       :is-saving="isSaving"
       :is-refetching="isRefetching"
       :is-fetching="isFetching"
-      :show-refetch="isDesktop"
+      :show-refetch="isOwner"
       :has-fetched="hasFetched"
       @update:model-value="Object.assign(selectedMonth, $event)"
       @fetch="onFetch"
@@ -101,6 +102,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
+import { useRoute } from 'vue-router';
 
 import CookiePanel from 'components/CookiePanel.vue';
 import MonthSelector from 'components/MonthSelector.vue';
@@ -126,11 +128,12 @@ import {
 } from 'src/services/supabaseService';
 
 // ─────────────────────────────────────────────
-// 플랫폼
+// 플랫폼 / 소유자
 // ─────────────────────────────────────────────
 
 const $q = useQuasar();
-const isDesktop = computed(() => $q.platform.is.desktop);
+const route = useRoute();
+const isOwner = computed(() => route.query.owner === '1');
 
 // ─────────────────────────────────────────────
 // 상태
@@ -264,8 +267,8 @@ async function onFetch() {
       return;
     }
 
-    // 2. Supabase에 없음 → 모바일은 여기서 종료
-    if (!isDesktop.value) {
+    // 2. Supabase에 없음 → 소유자 브라우저가 아니면 여기서 종료
+    if (!isOwner.value) {
       hasFetched.value = true;
       return;
     }
